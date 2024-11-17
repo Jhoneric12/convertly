@@ -11,7 +11,8 @@ const config: Config = {
       colors: {
         'accent-color': '#5CE1E6',
         'main-color': '#9B51E0',
-        'page-color': '#FEFDFF'
+        'page-color': '#FEFDFF',
+        'text-color': '#333333'
       },
     },
   },

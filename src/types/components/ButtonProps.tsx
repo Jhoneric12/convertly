@@ -1,5 +1,5 @@
 export interface ButtonProps {
     title: string,
-    type?: string
+    type?: "button" | "submit" | "reset"
     onClick?: () => void
 }

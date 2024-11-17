@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useDropzone } from 'react-dropzone'
 import PrimaryButton from '../ui/buttons/PrimaryButton';
 import UploadIcon from '../../assets/images/Upload.png'

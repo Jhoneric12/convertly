@@ -1,12 +1,14 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import PrimaryButton from '../ui/buttons/PrimaryButton';
 import UploadIcon from '../../assets/images/Upload.png'
 import Image from 'next/image';
 
 export default function FileUpload() {
+
+    const [isLoading, setIsLoading] = useState(false)
 
     const { acceptedFiles, getRootProps, getInputProps, open, fileRejections } = useDropzone({
         accept: {
@@ -28,36 +30,49 @@ export default function FileUpload() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const form = new FormData();
-        acceptedFiles.forEach((file) => {
-            form.append('file', file);
-        });
+        setIsLoading(true);
+        try {
+            const form = new FormData();
+            acceptedFiles.forEach((file) => {
+                form.append('file', file);
+            });
 
-        const response = await fetch('https://api.apyhub.com/convert/word-file/pdf-file?output=test-sample.pdf&landscape=false', {
-            method: 'POST',
-            headers: {
-                'apy-token': process.env.NEXT_PUBLIC_APY_TOKEN as string,
-                // 'content-type': 'multipart/form-data'
-            },
-            body: form
-        });
+            const response = await fetch('https://api.apyhub.com/convert/word-file/pdf-file?output=test-sample.pdf&landscape=false', {
+                method: 'POST',
+                headers: {
+                    'apy-token': process.env.NEXT_PUBLIC_APY_TOKEN as string,
+                    // 'content-type': 'multipart/form-data'
+                },
+                body: form
+            });
 
-        console.log(response)
+            console.log(response)
 
-        // const pdf = await response.json();
-        const blob = await response.blob()
-        const url = URL.createObjectURL(blob);
-
-        if (response.statusText === 'Forbidden' || response.statusText == 'Unauthorized') {
-            alert('The converter api reched its daily limit, try again later')
+            if (!response.ok) {
+                if (response.status === 403 || response.status === 401) {
+                  alert("The converter API reached its daily limit. Please try again later.");
+                } else {
+                  alert(`Error: ${response.statusText}`);
+                }
+                return;
+              }
+          
+              const blob = await response.blob();
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "converted.pdf";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+          
+              URL.revokeObjectURL(url);
         }
-        else {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'converted.pdf';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+        catch (err) {
+            alert('An error occure when converting the document')
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
@@ -88,6 +103,16 @@ export default function FileUpload() {
                 <form onSubmit={handleSubmit}>
                     <PrimaryButton title='Convert' type='submit'/>
                 </form>
+            )
+        }
+
+        {
+            isLoading && (
+                <div className='absolute inset-0 bg-loading-color z-50'>
+                    <div className='flex min-h-screen justify-center items-center'>
+                        <h1 className='text-text-color font-bold text-lg'>Converting......</h1>
+                    </div>
+                </div>
             )
         }
         

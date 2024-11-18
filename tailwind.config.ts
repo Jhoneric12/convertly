@@ -12,7 +12,8 @@ const config: Config = {
         'accent-color': '#5CE1E6',
         'main-color': '#9B51E0',
         'page-color': '#FEFDFF',
-        'text-color': '#333333'
+        'text-color': '#333333',
+        'loading-color': 'rgba(155, 81, 224, 0.6)'
       },
     },
   },

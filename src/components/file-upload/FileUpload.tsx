@@ -68,8 +68,8 @@ export default function FileUpload() {
           
               URL.revokeObjectURL(url);
         }
-        catch (err) {
-            alert('An error occure when converting the document')
+        catch (errors) {
+            alert(`An error occurd when converting the document: ${errors}`)
         }
         finally {
             setIsLoading(false);
